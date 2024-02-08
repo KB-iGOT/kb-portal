@@ -1,85 +1,71 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { catchError } from 'rxjs/operators';
 import urlConfig from '../config/url.config.json';
-import secret from '../../../secret.json';
+import { ApiBaseService } from '../services/base-api/api-base.service';
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.scss'],
 })
 export class SurveyComponent implements OnInit {
-  assessment: any;
-  http;
+  assessmentResult: any;
+  baseApiService;
   route;
-  id!: string | null;
   solutionId!: string | null;
   district: any;
   state: any;
   block: any;
   school: any;
   role: any;
-
+  profileDetails:
+    | { district: any; state: any; block: any; school: any; role: any }
+    | undefined;
   constructor() {
-    this.http = inject(HttpClient);
+    this.baseApiService = inject(ApiBaseService);
     this.route = inject(ActivatedRoute);
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe((param) => {
-      this.id = param['id'];
-    });
-
     this.route.queryParams.subscribe((queryParam) => {
       this.solutionId = queryParam['solutionId'];
-      this.district = queryParam['district'];
-      this.state = queryParam['state'];
-      this.block = queryParam['block'];
-      this.school = queryParam['school'];
-      this.role = queryParam['role'];
+      this.profileDetails = {
+        district: queryParam['district'],
+        state: queryParam['state'],
+        block: queryParam['block'],
+        school: queryParam['school'],
+        role: queryParam['role'],
+      };
     });
 
     this.fetchSurveyDetails();
   }
 
   fetchSurveyDetails() {
-    this.http
+    this.baseApiService
       .post(
-        urlConfig.baseURL +
-          urlConfig.surveyURL +
-          this.id +
+          urlConfig.surveyDetailsURL +
           `?solutionId=${this.solutionId}`,
-        {
-          district: this.district,
-          state: this.state,
-          block: this.block,
-          school: this.school,
-          role: this.role,
-        },
-        {
-          headers: secret
-        }
-      )
-      .pipe(
-        catchError((error: any) => {
-          if (error.status === 0) {
-            console.error('Network error:', error.message);
-          } else if (error.status >= 400 && error.status < 500) {
-            console.error('Client-side error:', error.message);
-          } else if (error.status >= 500) {
-            console.error('Server error:', error.message);
-          }
-          throw new Error('Unable to fetch the survey. Please try again');
-        })
+        this.profileDetails
       )
       .subscribe((res: any) => {
-        this.assessment = res.result;
-        console.log(this.assessment);
+        this.assessmentResult = res.result;
+        console.log(this.assessmentResult);
       });
   }
 
   submitOrSaveEvent(event: any): void {
-    console.log(event, 'event from the webcomponent');
+    const evidenceData = { ...event.detail.data, status: event.detail.status };
+    this.baseApiService
+      .post(
+          urlConfig.surveySubmissionURL +
+          this.assessmentResult.assessment.submissionId,
+        {
+          ...this.profileDetails,
+          evidence: evidenceData,
+        }
+      )
+      .subscribe((res: any) => {
+        console.log(res);
+      });
   }
 }

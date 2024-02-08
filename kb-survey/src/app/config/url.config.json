@@ -1,4 +1,5 @@
 {
     "baseURL":"http://localhost:3000",
-    "surveyURL":"/api/surveys/mlsurvey/v1/details/"
+    "surveyDetailsURL":"/api/surveys/mlsurvey/v1/details/",
+    "surveySubmissionURL":"/api/surveySubmissions/mlsurvey/v1/update/"
 }
