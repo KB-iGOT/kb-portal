@@ -1,5 +1,5 @@
 {
-    "baseURL":"http://localhost:3000",
+    "baseURL":"https://85d3-106-51-187-36.ngrok-free.app",
     "surveyDetailsURL":"/api/surveys/mlsurvey/v1/details/",
     "surveySubmissionURL":"/api/surveySubmissions/mlsurvey/v1/update/"
 }
