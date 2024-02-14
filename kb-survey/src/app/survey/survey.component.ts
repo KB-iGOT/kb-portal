@@ -17,24 +17,20 @@ export class SurveyComponent implements OnInit {
   block: any;
   school: any;
   role: any;
-  profileDetails:
-    | { district: any; state: any; block: any; school: any; role: any }
-    | undefined;
+  profileDetails:any;
   constructor() {
     this.baseApiService = inject(ApiBaseService);
     this.route = inject(ActivatedRoute);
   }
 
   ngOnInit(): void {
+    this.route.params.subscribe(param => {
+      this.solutionId = param['id']
+    })
+    
     this.route.queryParams.subscribe((queryParam) => {
-      this.solutionId = queryParam['solutionId'];
-      this.profileDetails = {
-        district: queryParam['district'],
-        state: queryParam['state'],
-        block: queryParam['block'],
-        school: queryParam['school'],
-        role: queryParam['role'],
-      };
+      const {solutionId, ...detailsOfProfile } = queryParam
+      this.profileDetails = detailsOfProfile
     });
 
     this.fetchSurveyDetails();
