@@ -1,0 +1,21 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+:root{
+    --primary-color:#663399;
+    --btn-outline:#663399;
+    --error-color:rgb(150, 4, 4);
+    --question-tip:gray;
+    --general-btn-text-color:white;
+    --general-btn-hover-bg:white;
+    --secondary-btn-bg:white;
+    --secondary-btn-hover-bg:whitesmoke;
+    --card-bg:white;
+    --disabled-btn-bg:gainsboro;
+    --disabled-btn-text:gray;
+}
+
+.mat-progress-spinner circle, .mat-spinner circle{
+    stroke: var(--primary-color);
+}
+

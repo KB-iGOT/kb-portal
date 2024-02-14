@@ -1,0 +1,4 @@
+{
+    "surveyDetailsURL":"/api/surveys/mlsurvey/v1/details/",
+    "surveySubmissionURL":"/api/surveySubmissions/mlsurvey/v1/update/"
+}
