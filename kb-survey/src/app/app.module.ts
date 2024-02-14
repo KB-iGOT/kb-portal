@@ -9,10 +9,19 @@ import { BrowserAnimationsModule } from  '@angular/platform-browser/animations';
 import { SurveyComponent } from './survey/survey.component';
 import { ApiInterceptorService } from  './services/interceptor/api-interceptor.service';
 import { ApiBaseService } from './services/base-api/api-base.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SpinnerComponent } from './shared/components/spinner/spinner.component';
+import { ToastrModule } from 'ngx-toastr';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialogModule} from '@angular/material/dialog';
+import { DialogComponent } from './shared/components/dialog/dialog.component';
+
 @NgModule({
   declarations: [
     AppComponent,
-    SurveyComponent
+    SurveyComponent,
+    SpinnerComponent,
+    DialogComponent
   ],
   imports: [
     CommonModule,
@@ -20,8 +29,12 @@ import { ApiBaseService } from './services/base-api/api-base.service';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    MatSnackBarModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ToastrModule.forRoot({ preventDuplicates: true }),
+    MatProgressSpinnerModule,
+    MatDialogModule
   ],
   providers: [ 
     {
