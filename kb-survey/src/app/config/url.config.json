@@ -1,5 +1,4 @@
 {
-    "baseURL":"https://876c-106-51-191-34.ngrok-free.app",
     "surveyDetailsURL":"/api/surveys/mlsurvey/v1/details/",
     "surveySubmissionURL":"/api/surveySubmissions/mlsurvey/v1/update/"
 }

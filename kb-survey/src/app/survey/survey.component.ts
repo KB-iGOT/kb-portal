@@ -2,8 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import urlConfig from '../config/url.config.json';
 import { ApiBaseService } from '../services/base-api/api-base.service';
-import { ToastrService } from 'ngx-toastr';
-import Swal from 'sweetalert2';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   MatDialog
@@ -25,11 +23,10 @@ export class SurveyComponent implements OnInit {
   block: any;
   school: any;
   role: any;
-  profileDetails:
-    | { district: any; state: any; block: any; school: any; role: any }
-    | undefined;
+  profileDetails: any;
+  saveAndSubmitStatus: string = 'noAction'
 
-  constructor(private toastService: ToastrService, private _snackBar: MatSnackBar,
+  constructor(private _snackBar: MatSnackBar,
     public dialog: MatDialog,) {
     this.baseApiService = inject(ApiBaseService);
     this.route = inject(ActivatedRoute);
@@ -38,49 +35,57 @@ export class SurveyComponent implements OnInit {
 
   ngOnInit(): void {
     // this.openConfirmationDialog();
+    this.route.params.subscribe(param => {
+      this.solutionId = param['id']
+    })
 
     this.route.queryParams.subscribe((queryParam) => {
-      this.solutionId = queryParam['solutionId'];
-      this.profileDetails = {
-        district: queryParam['district'],
-        state: queryParam['state'],
-        block: queryParam['block'],
-        school: queryParam['school'],
-        role: queryParam['role'],
-      };
+      console.log(queryParam);
+
+      this.profileDetails = queryParam;
     });
 
     this.fetchSurveyDetails();
   }
 
-  animal: string = "qwe";
-  name: string = "ds";
 
 
 
-  openConfirmationDialog(): void {
+  openConfirmationDialog(title: any, message: any, timer: any, actionBtns: boolean,
+    btnLeftLabel: any, btnRightLabel: any): Promise<boolean> {
     const dialogRef = this.dialog.open(DialogComponent, {
-      width: '250px',
+      // width: '250px',
+      // minWidth: 'max-content',
       data: {
-        title: 'Confirmation',
-        message: 'Are you sure you want to save survey?'
+        title: title,
+        message: message,
+        actionBtns: actionBtns,
+        btnLeftLabel: btnLeftLabel,
+        btnRightLabel: btnRightLabel,
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('User confirmed');
         return true
 
       } else {
-        console.log('User canceled');
         return false
       }
     });
+
+    if (timer == 3000) {
+      setTimeout(() => {
+        dialogRef.close();
+      }, 3000);
+    }
+    return dialogRef.afterClosed().toPromise();
+
   }
 
 
   fetchSurveyDetails() {
+    this.showSpinner = true;
     this.baseApiService
       .post(
         urlConfig.surveyDetailsURL +
@@ -88,99 +93,106 @@ export class SurveyComponent implements OnInit {
         this.profileDetails
       )
       .subscribe((res: any) => {
-        this.assessmentResult = res.result;
+     
+        
+        if(res?.message == "Survey details fetched successfully"){
+          this.assessmentResult = res.result;
+        }
+       else if(res?.message == "Could not found solution details"){
+        this.openConfirmationDialog('Error', 'Survey could not be found, Try again after some time', 3000, false, '', '')
+
+        }else{
+          this.openConfirmationDialog('Error', 'Something went wrong, try again', 3000, false, '', '')
+
+        }
+      
+        this.showSpinner = false;
         console.log(this.assessmentResult);
       });
   }
 
-  submitOrSaveEvent(event: any): void {
+  async submitOrSaveEvent(event: any) {
 
     console.log("event", event?.detail?.status)
     const evidenceData = { ...event.detail.data, status: event.detail.status };
 
+    if (event?.detail?.status == "submit") {
+      const response = await this.openConfirmationDialog('Confirmation', 'Are you sure you want to save survey?', 'fasle', true, 'Cancel', 'Confirm')
+      console.log(response)
+      if (response) {
+        this.showSpinner = true;
 
- 
-
-    if(event?.detail?.status == "submit"){
-      const dialogRef = this.dialog.open(DialogComponent, {
-        width: '250px',
-        data: {
-          title: 'Confirmation',
-          message: 'Are you sure you want to save survey?'
-        }
-      });
-  
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          console.log('User confirmed');
-          this.showSpinner = true;
-
-          this.baseApiService
+        this.baseApiService
           .post(
-              urlConfig.surveySubmissionURL +
-              this.assessmentResult.assessment.submissionId,
+            urlConfig.surveySubmissionURL +
+            this.assessmentResult.assessment.submissionId,
             {
               ...this.profileDetails,
               evidence: evidenceData,
             }
           )
           .subscribe((res: any) => {
-            this._snackBar.open("Successfully your survey has been saved", 'Success', {
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-              duration: 3000,
-              panelClass: ['red-snackbar', 'login-snackbar'],
-            });
-    
+
+
+            this.openConfirmationDialog('Success', `Successfully your survey has been submited`, 'fasle', false, '', '')
+            this.saveAndSubmitStatus = "Submited"
             this.showSpinner = false;
-    
+
           },
-          (err:any) => {
-            this.toastService.error(err?.error?.message);
-          }
+            (err: any) => {
+              this.openConfirmationDialog('Error', 'Something went wrong, try again', 3000, false, '', '')
+
+            }
           );
-  
-        } else {
-          console.log('User canceled');
-        }
-      });
-    }else{
-    this.showSpinner = true;
+      }
+    } else {
+      this.showSpinner = true;
 
       this.baseApiService
-      .post(
+        .post(
           urlConfig.surveySubmissionURL +
           this.assessmentResult.assessment.submissionId,
-        {
-          ...this.profileDetails,
-          evidence: evidenceData,
-        }
-      )
-      .subscribe((res: any) => {
-        this._snackBar.open("Successfully your survey has been saved", 'Success', {
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          duration: 3000,
-          panelClass: ['red-snackbar', 'login-snackbar'],
-        });
+          {
+            ...this.profileDetails,
+            evidence: evidenceData,
+          }
+        )
+        .subscribe(async (res: any) => {
 
-        this.showSpinner = false;
+          this.showSpinner = false;
+         
+            const responses = await this.openConfirmationDialog('Success', `Successfully your survey has been saved. Do you want to continue?`, "false", true, 'Later', 'Continue');
+            if (responses) {
+             
+            } else{
+              this.saveAndSubmitStatus = "Saved"
+            }
+         
 
-      },
-      (err:any) => {
-        this.toastService.error(err?.error?.message);
-      }
-      );
+       
+
+        },
+          (err: any) => {
+            this.openConfirmationDialog('Error', 'Something went wrong, try again', 3000, false, '', '')
+
+          }
+        );
     }
 
   }
 
-  showMessage() {
-    this.toastService.success('This is a test message');
-  }
 
 
+  // async showDialog() {
 
+
+  //   try {
+  //     let mes: any = await this.openConfirmationDialog('Confirmation', 'Are you sure you want to save survey?', 'fasle')
+  //     console.log(mes)
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
 
 }

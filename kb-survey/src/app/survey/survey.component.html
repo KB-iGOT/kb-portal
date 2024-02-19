@@ -1,14 +1,16 @@
-<ngx-toastr></ngx-toastr>
-<questionnaire-player-main
-  angular
-  [assessment]="assessmentResult"
-  (submitOrSaveEvent)="submitOrSaveEvent($event)"
-></questionnaire-player-main>
+<questionnaire-player-main *ngIf="saveAndSubmitStatus == 'noAction'; else action" 
+angular
+  [assessment]="assessmentResult" 
+  (submitOrSaveEvent)="submitOrSaveEvent($event)"></questionnaire-player-main>
+
+<ng-template #action>
+  <mat-card class="d-flex justify-content-center">
+    <mat-card-content class="fs-4">Thank you, your survay has been {{saveAndSubmitStatus}}</mat-card-content>
+  </mat-card>
+  
+</ng-template>
 
 <!-- <mat-spinner></mat-spinner> -->
 <app-spinner *ngIf="showSpinner"></app-spinner>
 
-<button (click)="showMessage()">show toaster</button>
-
-
-
+<!-- <button (click)="showDialog()">show dilaog</button> -->

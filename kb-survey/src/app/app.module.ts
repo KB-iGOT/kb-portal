@@ -11,11 +11,10 @@ import { ApiInterceptorService } from  './services/interceptor/api-interceptor.s
 import { ApiBaseService } from './services/base-api/api-base.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
-import { ToastrModule } from 'ngx-toastr';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialogModule} from '@angular/material/dialog';
 import { DialogComponent } from './shared/components/dialog/dialog.component';
-
+import {MatCardModule} from '@angular/material/card';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,9 +31,9 @@ import { DialogComponent } from './shared/components/dialog/dialog.component';
     MatSnackBarModule,
     AppRoutingModule,
     HttpClientModule,
-    ToastrModule.forRoot({ preventDuplicates: true }),
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCardModule
   ],
   providers: [ 
     {

@@ -1,3 +1,74 @@
 button {
     margin-right: 8px;
   }
+
+  .success{
+    color: green;
+  }
+  .error{
+    color: red;
+  }
+  .borderRadius{
+    border: 1px solid #6a1b9a !important;
+  }
+
+  .partition {
+    margin-top: 2rem;
+    width: 100%;
+    background-color: var(--primary-color);
+    height: 1px;
+}
+
+
+  .mat-dialog-actions {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+  }
+  
+  /* Adjust button size */
+  .mat-dialog-actions button {
+    padding: 7px 25px; /* Adjust padding for larger size */
+    font-size: 15px; /* Adjust font size */
+    border-radius: 17px;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* component-specific styles */
+
+/* Set the dialog box to min-width: max-content */
+.mat-dialog-container {
+  min-width: max-content;
+}
+
+/* Customize button styles */
+.mat-dialog-actions .purple-button {
+  background-color: #6a1b9a; /* Purple */
+  color: #fff;
+}
+
+.mat-dialog-actions .purple-border-button {
+  background-color: transparent;
+  border: 2px solid #6a1b9a; /* Purple */
+  color: #6a1b9a; /* Purple */
+}
+
+.mat-dialog-actions .purple-border-button:hover {
+  background-color: rgba(106, 27, 154, 0.1); /* Light purple */
+}
+
+
+
+
+
+
