@@ -11,16 +11,17 @@ import { ApiInterceptorService } from  './services/interceptor/api-interceptor.s
 import { ApiBaseService } from './services/base-api/api-base.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialogModule} from '@angular/material/dialog';
 import { DialogComponent } from './shared/components/dialog/dialog.component';
 import {MatCardModule} from '@angular/material/card';
+import { ResponseComponent } from './shared/components/response/response.component';
 @NgModule({
   declarations: [
     AppComponent,
     SurveyComponent,
     SpinnerComponent,
-    DialogComponent
+    DialogComponent,
+    ResponseComponent
   ],
   imports: [
     CommonModule,
@@ -28,7 +29,6 @@ import {MatCardModule} from '@angular/material/card';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSnackBarModule,
     AppRoutingModule,
     HttpClientModule,
     MatProgressSpinnerModule,
