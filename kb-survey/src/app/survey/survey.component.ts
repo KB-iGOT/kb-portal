@@ -54,15 +54,16 @@ export class SurveyComponent implements OnInit {
     });
     this.fetchSurveyDetails();
   }
-  openConfirmationDialog(title: any, message: any, timer: any, actionBtns: boolean,
-    btnLeftLabel: any, btnRightLabel: any): Promise<boolean> {
+  openConfirmationDialog(confirmationParams:any): Promise<boolean> {
+  // openConfirmationDialog(title: any, message: any, timer: any, actionBtns: boolean,
+  //   btnLeftLabel: any, btnRightLabel: any): Promise<boolean> {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
-        title: title,
-        message: message,
-        actionBtns: actionBtns,
-        btnLeftLabel: btnLeftLabel,
-        btnRightLabel: btnRightLabel,
+        title: confirmationParams?.title,
+        message: confirmationParams?.message,
+        actionBtns: confirmationParams?.actionBtns,
+        btnLeftLabel: confirmationParams?.btnLeftLabel,
+        btnRightLabel: confirmationParams?.btnRightLabel,
       }
     });
 
@@ -75,7 +76,7 @@ export class SurveyComponent implements OnInit {
       }
     });
 
-    if (timer == 3000) {
+    if (confirmationParams?.timer == 3000) {
       setTimeout(() => {
         dialogRef.close();
       }, 3000);
@@ -155,7 +156,16 @@ export class SurveyComponent implements OnInit {
          this.responseService.setResponse("Could not found solution details.");
           this.router.navigateByUrl('/response');
         } else {
-          this.openConfirmationDialog('Error', 'Something went wrong, try again', 3000, false, '', '')
+          const confirmationParams = {
+            title: "Error",
+            message: "Something went wrong, try again",
+            timer: 3000,
+            actionBtns: false,
+            btnLeftLabel: "",
+            btnRightLabel: ""
+          };
+    
+          this.openConfirmationDialog(confirmationParams)
         }
         this.showSpinner = false;
         console.log(this.assessmentResult);
@@ -165,7 +175,15 @@ export class SurveyComponent implements OnInit {
   async submitOrSaveEvent(event: any) {
 const evidenceData = { ...event.detail.data, status: event.detail.status };
     if (event?.detail?.status == "submit") {
-      const response = await this.openConfirmationDialog('Confirmation', 'Are you sure you want to submit survey?', 'fasle', true, 'Cancel', 'Confirm')
+      const confirmationParams = {
+        title: "Confirmation",
+        message: "Are you sure you want to submit survey?",
+        timer: 'fasle',
+        actionBtns: true,
+        btnLeftLabel: "Cancel",
+        btnRightLabel: "Confirm"
+      };
+      const response = await this.openConfirmationDialog(confirmationParams)
       if (response) {
         this.showSpinner = true;
         this.baseApiService
@@ -184,7 +202,16 @@ const evidenceData = { ...event.detail.data, status: event.detail.status };
             this.router.navigateByUrl('/response');
           },
             (err: any) => {
-              this.openConfirmationDialog('Error', 'Something went wrong, try again', 3000, false, '', '')
+              const confirmationParams = {
+                title: "Error",
+                message: "Something went wrong, try again",
+                timer: 3000,
+                actionBtns: false,
+                btnLeftLabel: "",
+                btnRightLabel: ""
+              };
+        
+              this.openConfirmationDialog(confirmationParams)
             }
           );
       }
@@ -202,7 +229,15 @@ const evidenceData = { ...event.detail.data, status: event.detail.status };
         )
         .subscribe(async (res: any) => {
           this.showSpinner = false;
-          const responses = await this.openConfirmationDialog('Success', `Successfully your survey has been saved. Do you want to continue?`, "false", true, 'Later', 'Continue');
+          const confirmationParams = {
+            title: "Success",
+            message: "Successfully your survey has been saved. Do you want to continue?",
+            timer: false,
+            actionBtns: true,
+            btnLeftLabel: "Later",
+            btnRightLabel: "Continue"
+          };
+          const responses = await this.openConfirmationDialog(confirmationParams);
           window.postMessage(res, '*');
           if (responses) {
 
@@ -212,7 +247,17 @@ const evidenceData = { ...event.detail.data, status: event.detail.status };
           }
         },
           (err: any) => {
-            this.openConfirmationDialog('Error', 'Something went wrong, try again', 3000, false, '', '')
+
+            const confirmationParams = {
+              title: "Error",
+              message: "Something went wrong, try again",
+              timer: 3000,
+              actionBtns: false,
+              btnLeftLabel: "",
+              btnRightLabel: ""
+            };
+      
+            this.openConfirmationDialog(confirmationParams)
 
           }
         );
