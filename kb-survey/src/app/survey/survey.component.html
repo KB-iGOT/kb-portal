@@ -1,5 +1,7 @@
-<questionnaire-player-main 
-angular
-  [assessment]="assessmentResult" 
-  (submitOrSaveEvent)="submitOrSaveEvent($event)"></questionnaire-player-main>
-<app-spinner *ngIf="showSpinner"></app-spinner>
+
+<questionnaire-player-main
+  angular
+  [assessment]="assessmentResult"
+  (submitOrSaveEvent)="submitOrSaveEvent($event)"
+  [fileuploadresponse]="fileUploadResponse"
+></questionnaire-player-main>
