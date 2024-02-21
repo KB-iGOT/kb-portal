@@ -45,18 +45,11 @@ export class SurveyComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe((queryParam) => {
-      const { solutionId, ...detailsOfProfile } = queryParam;
-      this.profileDetails = detailsOfProfile;
-    });
-
-    this.route.queryParams.subscribe((queryParam) => {
       this.profileDetails = queryParam;
     });
     this.fetchSurveyDetails();
   }
-  openConfirmationDialog(confirmationParams:any): Promise<boolean> {
-  // openConfirmationDialog(title: any, message: any, timer: any, actionBtns: boolean,
-  //   btnLeftLabel: any, btnRightLabel: any): Promise<boolean> {
+  openConfirmationDialog(confirmationParams: any): Promise<boolean> {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: {
         title: confirmationParams?.title,
@@ -153,7 +146,7 @@ export class SurveyComponent implements OnInit {
           this.assessmentResult = res.result;
         }
         else if (res?.message == "Could not found solution details") {
-         this.responseService.setResponse("Could not found solution details.");
+          this.responseService.setResponse("Could not found solution details.");
           this.router.navigateByUrl('/response');
         } else {
           const confirmationParams = {
@@ -164,7 +157,7 @@ export class SurveyComponent implements OnInit {
             btnLeftLabel: "",
             btnRightLabel: ""
           };
-    
+
           this.openConfirmationDialog(confirmationParams)
         }
         this.showSpinner = false;
@@ -173,7 +166,7 @@ export class SurveyComponent implements OnInit {
   }
 
   async submitOrSaveEvent(event: any) {
-const evidenceData = { ...event.detail.data, status: event.detail.status };
+    const evidenceData = { ...event.detail.data, status: event.detail.status };
     if (event?.detail?.status == "submit") {
       const confirmationParams = {
         title: "Confirmation",
@@ -210,7 +203,7 @@ const evidenceData = { ...event.detail.data, status: event.detail.status };
                 btnLeftLabel: "",
                 btnRightLabel: ""
               };
-        
+
               this.openConfirmationDialog(confirmationParams)
             }
           );
@@ -256,7 +249,7 @@ const evidenceData = { ...event.detail.data, status: event.detail.status };
               btnLeftLabel: "",
               btnRightLabel: ""
             };
-      
+
             this.openConfirmationDialog(confirmationParams)
 
           }
