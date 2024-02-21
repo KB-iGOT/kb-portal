@@ -51,7 +51,7 @@ button {
 
 .mat-dialog-actions .purple-button {
   background-color: var(--primary-color);
-  color: #fff;
+  color: var(--general-btn-text-color)
 }
 
 .mat-dialog-actions .purple-border-button {
