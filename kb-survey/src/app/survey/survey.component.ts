@@ -161,13 +161,13 @@ export class SurveyComponent implements OnInit {
           this.openConfirmationDialog(confirmationParams)
         }
         this.showSpinner = false;
-        console.log(this.assessmentResult);
       });
   }
 
   async submitOrSaveEvent(event: any) {
     const evidenceData = { ...event.detail.data, status: event.detail.status };
-    if (event?.detail?.status == "submit") {
+    let responseMessage = event?.detail?.status;
+    if (responseMessage == "submit") {
       const confirmationParams = {
         title: "Confirmation",
         message: "Are you sure you want to submit survey?",
@@ -176,85 +176,60 @@ export class SurveyComponent implements OnInit {
         btnLeftLabel: "Cancel",
         btnRightLabel: "Confirm"
       };
-      const response = await this.openConfirmationDialog(confirmationParams)
+      const response = await this.openConfirmationDialog(confirmationParams);
       if (response) {
-        this.showSpinner = true;
-        this.baseApiService
-          .post(
-            urlConfig.surveySubmissionURL +
-            this.assessmentResult.assessment.submissionId,
-            {
-              ...this.profileDetails,
-              evidence: evidenceData,
-            }
-          )
-          .subscribe((res: any) => {
-            window.postMessage(res, '*');
-            this.responseService.setResponse("Thank you, your survey has been Submited.");
-            this.showSpinner = false;
-            this.router.navigateByUrl('/response');
-          },
-            (err: any) => {
-              const confirmationParams = {
-                title: "Error",
-                message: "Something went wrong, try again",
-                timer: 3000,
-                actionBtns: false,
-                btnLeftLabel: "",
-                btnRightLabel: ""
-              };
-
-              this.openConfirmationDialog(confirmationParams)
-            }
-          );
+        responseMessage = "Submited";
       }
-    } else {
-      this.showSpinner = true;
-
-      this.baseApiService
-        .post(
-          urlConfig.surveySubmissionURL +
-          this.assessmentResult.assessment.submissionId,
-          {
-            ...this.profileDetails,
-            evidence: evidenceData,
-          }
-        )
-        .subscribe(async (res: any) => {
-          this.showSpinner = false;
-          const confirmationParams = {
-            title: "Success",
-            message: "Successfully your survey has been saved. Do you want to continue?",
-            timer: false,
-            actionBtns: true,
-            btnLeftLabel: "Later",
-            btnRightLabel: "Continue"
-          };
-          const responses = await this.openConfirmationDialog(confirmationParams);
-          window.postMessage(res, '*');
-          if (responses) {
-
-          } else {
-            this.responseService.setResponse("Thank you, your survey has been Saved.");
-            this.router.navigateByUrl('/response');
-          }
-        },
-          (err: any) => {
-
-            const confirmationParams = {
-              title: "Error",
-              message: "Something went wrong, try again",
-              timer: 3000,
-              actionBtns: false,
-              btnLeftLabel: "",
-              btnRightLabel: ""
-            };
-
-            this.openConfirmationDialog(confirmationParams)
-
-          }
-        );
+      else{
+        return;
+      }
     }
+    else {
+      responseMessage = "Saved";
+    }
+      this.showSpinner = true;
+    this.baseApiService
+      .post(
+        urlConfig.surveySubmissionURL +
+        this.assessmentResult.assessment.submissionId,
+        {
+          ...this.profileDetails,
+          evidence: evidenceData,
+        }
+      )
+      .subscribe(async (res: any) => {
+        this.showSpinner = false;
+        window.postMessage(res, '*');
+        let responses = false;
+    if(responseMessage == "Saved"){
+      const confirmationParams = {
+        title: "Success",
+        message: "Successfully your survey has been saved. Do you want to continue?",
+        timer: false,
+        actionBtns: true,
+        btnLeftLabel: "Later",
+        btnRightLabel: "Continue"
+      };
+       responses = await this.openConfirmationDialog(confirmationParams);
+    }
+        if (!responses) {
+          this.responseService.setResponse("Thank you, your survey has been" + " "+ responseMessage);
+          this.router.navigateByUrl('/response');
+        } 
+      },
+        (err: any) => {
+
+          const confirmationParams = {
+            title: "Error",
+            message: "Something went wrong, try again",
+            timer: 3000,
+            actionBtns: false,
+            btnLeftLabel: "",
+            btnRightLabel: ""
+          };
+          this.openConfirmationDialog(confirmationParams)
+        }
+      );
 
   }
 }
