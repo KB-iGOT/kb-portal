@@ -11,7 +11,7 @@ button {
 }
 
 .borderRadius {
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--primary-color) !important;
 } 
 
 .partition {
@@ -44,29 +44,22 @@ button {
 
 
 
-/* component-specific styles */
-
-/* Set the dialog box to min-width: max-content */
 .mat-dialog-container {
   min-width: max-content;
 }
 
-/* Customize button styles */
+
 .mat-dialog-actions .purple-button {
-  background-color: #6a1b9a;
-  /* Purple */
+  background-color: var(--primary-color);
   color: #fff;
 }
 
 .mat-dialog-actions .purple-border-button {
   background-color: transparent;
-  border: 2px solid #6a1b9a;
-  /* Purple */
-  color: #6a1b9a;
-  /* Purple */
+  border: 2px solid var(--primary-color);
+color: var(--primary-color);
 }
 
 .mat-dialog-actions .purple-border-button:hover {
-  background-color: rgba(106, 27, 154, 0.1);
-  /* Light purple */
+  background-color: var(--primary-color);
 }
