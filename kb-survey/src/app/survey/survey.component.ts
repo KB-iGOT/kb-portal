@@ -51,22 +51,11 @@ export class SurveyComponent implements OnInit {
   }
   openConfirmationDialog(confirmationParams: any): Promise<boolean> {
     const dialogRef = this.dialog.open(DialogComponent, {
-      data: {
-        title: confirmationParams?.title,
-        message: confirmationParams?.message,
-        actionBtns: confirmationParams?.actionBtns,
-        btnLeftLabel: confirmationParams?.btnLeftLabel,
-        btnRightLabel: confirmationParams?.btnRightLabel,
-      }
+      data: confirmationParams
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        return true
-
-      } else {
-        return false
-      }
+      return result
     });
 
     if (confirmationParams?.timer == 3000) {
@@ -146,19 +135,9 @@ export class SurveyComponent implements OnInit {
           this.assessmentResult = res.result;
         }
         else if (res?.message == "Could not found solution details") {
-          this.responseService.setResponse("Could not found solution details.");
-          this.router.navigateByUrl('/response');
+          this.redirectionFun("Could not found solution details.");
         } else {
-          const confirmationParams = {
-            title: "Error",
-            message: "Something went wrong, try again",
-            timer: 3000,
-            actionBtns: false,
-            btnLeftLabel: "",
-            btnRightLabel: ""
-          };
-
-          this.openConfirmationDialog(confirmationParams)
+          this.errorDialog();
         }
         this.showSpinner = false;
       });
@@ -166,8 +145,8 @@ export class SurveyComponent implements OnInit {
 
   async submitOrSaveEvent(event: any) {
     const evidenceData = { ...event.detail.data, status: event.detail.status };
-    let responseMessage = event?.detail?.status;
-    if (responseMessage == "submit") {
+
+    if (event?.detail?.status == "submit") {
       const confirmationParams = {
         title: "Confirmation",
         message: "Are you sure you want to submit survey?",
@@ -177,17 +156,11 @@ export class SurveyComponent implements OnInit {
         btnRightLabel: "Confirm"
       };
       const response = await this.openConfirmationDialog(confirmationParams);
-      if (response) {
-        responseMessage = "Submited";
-      }
-      else{
+      if (!response) {
         return;
       }
     }
-    else {
-      responseMessage = "Saved";
-    }
-      this.showSpinner = true;
+    this.showSpinner = true;
     this.baseApiService
       .post(
         urlConfig.surveySubmissionURL +
@@ -201,35 +174,44 @@ export class SurveyComponent implements OnInit {
         this.showSpinner = false;
         window.postMessage(res, '*');
         let responses = false;
-    if(responseMessage == "Saved"){
-      const confirmationParams = {
-        title: "Success",
-        message: "Successfully your survey has been saved. Do you want to continue?",
-        timer: false,
-        actionBtns: true,
-        btnLeftLabel: "Later",
-        btnRightLabel: "Continue"
-      };
-       responses = await this.openConfirmationDialog(confirmationParams);
-    }
+        if (event?.detail?.status == "save") {
+          const confirmationParams = {
+            title: "Success",
+            message: "Successfully your survey has been saved. Do you want to continue?",
+            timer: false,
+            actionBtns: true,
+            btnLeftLabel: "Later",
+            btnRightLabel: "Continue"
+          };
+          responses = await this.openConfirmationDialog(confirmationParams);
+        }
         if (!responses) {
-          this.responseService.setResponse("Thank you, your survey has been" + " "+ responseMessage);
-          this.router.navigateByUrl('/response');
-        } 
+          let msgRes = event?.detail?.status == "save" ? "Saved" : "Submited"
+          this.redirectionFun(`Thank you, your survey has been ${msgRes}`);
+        }
       },
         (err: any) => {
-
-          const confirmationParams = {
-            title: "Error",
-            message: "Something went wrong, try again",
-            timer: 3000,
-            actionBtns: false,
-            btnLeftLabel: "",
-            btnRightLabel: ""
-          };
-          this.openConfirmationDialog(confirmationParams)
+          this.errorDialog();
         }
       );
 
+  }
+
+  redirectionFun(msg: string) {
+    this.responseService.setResponse(msg);
+    this.router.navigateByUrl('/response');
+  }
+
+  errorDialog() {
+    const confirmationParams = {
+      title: "Error",
+      message: "Something went wrong, try again",
+      timer: 3000,
+      actionBtns: false,
+      btnLeftLabel: "",
+      btnRightLabel: ""
+    };
+
+    this.openConfirmationDialog(confirmationParams)
   }
 }
