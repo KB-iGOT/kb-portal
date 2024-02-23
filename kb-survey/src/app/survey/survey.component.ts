@@ -8,6 +8,19 @@ import {
 } from '@angular/material/dialog';
 import { DialogComponent } from '../shared/components/dialog/dialog.component';
 import { ResponseService } from '../services/observable/response.service';
+
+interface UrlConfig {
+  portal: {
+      surveyDetailsURL: string;
+      surveySubmissionURL: string;
+      presignedURL: string;
+  };
+  mobile: {
+      surveyDetailsURL: string;
+      surveySubmissionURL: string;
+      presignedURL: string;
+  };
+}
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
@@ -26,6 +39,7 @@ export class SurveyComponent implements OnInit {
   school: any;
   role: any;
   profileDetails: any;
+  deviceType!:keyof UrlConfig;
 
   constructor(private responseService: ResponseService,
     public dialog: MatDialog, private router: Router) {
@@ -44,7 +58,9 @@ export class SurveyComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe((queryParam) => {
-      this.profileDetails = queryParam;
+      const { device, ...detailsOfProfile } = queryParam;
+      this.profileDetails = detailsOfProfile;
+      this.deviceType = device;
     });
     this.fetchSurveyDetails();
   }
@@ -79,7 +95,7 @@ export class SurveyComponent implements OnInit {
         files: [event.data.name],
       };
       this.baseApiService
-        .post(urlConfig.presignedURL, payload)
+        .post(urlConfig[this.deviceType].presignedURL, payload)
         .pipe(
           catchError((err) => {
             this.fileUploadResponse = {
@@ -127,7 +143,7 @@ export class SurveyComponent implements OnInit {
     this.showSpinner = true;
     this.baseApiService
       .post(
-        urlConfig.surveyDetailsURL + `?solutionId=${this.solutionId}`,
+        urlConfig[this.deviceType].surveyDetailsURL + `?solutionId=${this.solutionId}`,
         this.profileDetails
       )
       .subscribe((res: any) => {
@@ -167,7 +183,7 @@ export class SurveyComponent implements OnInit {
     this.showSpinner = true;
     this.baseApiService
       .post(
-        urlConfig.surveySubmissionURL +
+        urlConfig[this.deviceType].surveySubmissionURL +
         this.assessmentResult.assessment.submissionId,
         {
           ...this.profileDetails,
