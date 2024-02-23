@@ -9,10 +9,19 @@ import { BrowserAnimationsModule } from  '@angular/platform-browser/animations';
 import { SurveyComponent } from './survey/survey.component';
 import { ApiInterceptorService } from  './services/interceptor/api-interceptor.service';
 import { ApiBaseService } from './services/base-api/api-base.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SpinnerComponent } from './shared/components/spinner/spinner.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import { DialogComponent } from './shared/components/dialog/dialog.component';
+import {MatCardModule} from '@angular/material/card';
+import { ResponseComponent } from './shared/components/response/response.component';
 @NgModule({
   declarations: [
     AppComponent,
-    SurveyComponent
+    SurveyComponent,
+    SpinnerComponent,
+    DialogComponent,
+    ResponseComponent
   ],
   imports: [
     CommonModule,
@@ -21,7 +30,10 @@ import { ApiBaseService } from './services/base-api/api-base.service';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
+    MatCardModule
   ],
   providers: [ 
     {

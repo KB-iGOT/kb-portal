@@ -1,0 +1,53 @@
+button {
+  margin-right: 8px;
+}
+
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}
+
+.borderRadius {
+  border: 1px solid var(--primary-color) !important;
+} 
+
+.partition {
+  margin-top: 2rem;
+  width: 100%;
+  background-color: var(--primary-color);
+  height: 1px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mat-dialog-actions button {
+  padding: 7px 25px;
+  font-size: 15px;
+  border-radius: 17px;
+}
+
+.mat-dialog-container {
+  min-width: max-content;
+}
+
+.mat-dialog-actions .purple-button {
+  background-color: var(--primary-color);
+  color: var(--general-btn-text-color)
+}
+
+.mat-dialog-actions .purple-border-button {
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+color: var(--primary-color);
+}
+
+.mat-dialog-actions .purple-border-button:hover {
+  background-color: var(--primary-color);
+  color: var(--general-btn-text-color);
+}
