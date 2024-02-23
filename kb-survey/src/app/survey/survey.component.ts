@@ -33,7 +33,6 @@ export class SurveyComponent implements OnInit {
     this.route = inject(ActivatedRoute);
   }
 
-
   ngOnInit(): void {
     window.addEventListener(
       'message',
@@ -49,6 +48,7 @@ export class SurveyComponent implements OnInit {
     });
     this.fetchSurveyDetails();
   }
+
   openConfirmationDialog(confirmationParams: any): Promise<boolean> {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: confirmationParams
@@ -140,12 +140,16 @@ export class SurveyComponent implements OnInit {
           this.errorDialog();
         }
         this.showSpinner = false;
-      });
+      },
+      (err:any) => {
+        this.errorDialog();
+      }
+      );
   }
 
   async submitOrSaveEvent(event: any) {
+    console.log(event?.detail?.status)
     const evidenceData = { ...event.detail.data, status: event.detail.status };
-
     if (event?.detail?.status == "submit") {
       const confirmationParams = {
         title: "Confirmation",
@@ -174,7 +178,7 @@ export class SurveyComponent implements OnInit {
         this.showSpinner = false;
         window.postMessage(res, '*');
         let responses = false;
-        if (event?.detail?.status == "save") {
+        if (event?.detail?.status == "draft") {
           const confirmationParams = {
             title: "Success",
             message: "Successfully your survey has been saved. Do you want to continue?",
@@ -186,7 +190,7 @@ export class SurveyComponent implements OnInit {
           responses = await this.openConfirmationDialog(confirmationParams);
         }
         if (!responses) {
-          let msgRes = event?.detail?.status == "save" ? "Saved" : "Submited"
+          let msgRes = event?.detail?.status == "draft" ? "Saved" : "Submited"
           this.redirectionFun(`Thank you, your survey has been ${msgRes}`);
         }
       },
@@ -194,7 +198,6 @@ export class SurveyComponent implements OnInit {
           this.errorDialog();
         }
       );
-
   }
 
   redirectionFun(msg: string) {
@@ -211,7 +214,6 @@ export class SurveyComponent implements OnInit {
       btnLeftLabel: "",
       btnRightLabel: ""
     };
-
     this.openConfirmationDialog(confirmationParams)
   }
 }
