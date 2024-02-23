@@ -24,12 +24,6 @@ export class ApiInterceptorService implements HttpInterceptor {
     });
 
     return next.handle(modifiedRequest).pipe(
-      tap(event => {
-        if (event instanceof HttpResponse) {
-          console.log('Received HTTP response:', event);
-        }
-      }),
-
       catchError((error: HttpErrorResponse) => {
         if (error.status === 0) {
           console.error('Network error:', error.message);
