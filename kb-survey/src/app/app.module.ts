@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from  '@angular/platform-browser/animations';
-import { SurveyComponent } from './survey/survey.component';
 import { ApiInterceptorService } from  './services/interceptor/api-interceptor.service';
 import { ApiBaseService } from './services/base-api/api-base.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -15,13 +14,18 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { DialogComponent } from './shared/components/dialog/dialog.component';
 import {MatCardModule} from '@angular/material/card';
 import { ResponseComponent } from './shared/components/response/response.component';
+import { QuestionnaireComponent } from './shared/components/questionnaire/questionnaire.component';
+import { ObservationComponent } from './components/observation/observation.component';
+import { SurveyComponent } from './components/survey/survey.component';
 @NgModule({
   declarations: [
     AppComponent,
     SurveyComponent,
+    ObservationComponent,
     SpinnerComponent,
     DialogComponent,
-    ResponseComponent
+    ResponseComponent,
+    QuestionnaireComponent
   ],
   imports: [
     CommonModule,

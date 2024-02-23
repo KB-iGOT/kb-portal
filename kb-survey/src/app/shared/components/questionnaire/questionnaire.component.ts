@@ -1,48 +1,32 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import urlConfig from '../config/url.config.json';
-import { ApiBaseService } from '../services/base-api/api-base.service';
+import urlConfig from '../../../config/url.config.json';
+import { ApiBaseService } from '../../../services/base-api/api-base.service';
 import { catchError } from 'rxjs';
-import {
-  MatDialog
-} from '@angular/material/dialog';
-import { DialogComponent } from '../shared/components/dialog/dialog.component';
-import { ResponseService } from '../services/observable/response.service';
-
-interface UrlConfig {
-  portal: {
-      surveyDetailsURL: string;
-      surveySubmissionURL: string;
-      presignedURL: string;
-  };
-  mobile: {
-      surveyDetailsURL: string;
-      surveySubmissionURL: string;
-      presignedURL: string;
-  };
-}
+import { MatDialog } from '@angular/material/dialog';
+import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
+import { ResponseService } from '../../../services/observable/response.service';
+import { UrlConfig, InputConfig} from '../../../interfaces/main.interface';
 @Component({
-  selector: 'app-survey',
-  templateUrl: './survey.component.html',
-  styleUrls: ['./survey.component.scss'],
+  selector: 'app-questionnaire',
+  templateUrl: './questionnaire.component.html',
+  styleUrls: ['./questionnaire.component.scss'],
 })
-export class SurveyComponent implements OnInit {
+export class QuestionnaireComponent implements OnInit {
+  @Input('config') config!: InputConfig;
   showSpinner: boolean = false;
   assessmentResult: any;
   fileUploadResponse: any = null;
   baseApiService;
   route;
-  solutionId!: string | null;
-  district: any;
-  state: any;
-  block: any;
-  school: any;
-  role: any;
   profileDetails: any;
-  deviceType!:keyof UrlConfig;
+  deviceType!: keyof UrlConfig;
 
-  constructor(private responseService: ResponseService,
-    public dialog: MatDialog, private router: Router) {
+  constructor(
+    private responseService: ResponseService,
+    public dialog: MatDialog,
+    private router: Router
+  ) {
     this.baseApiService = inject(ApiBaseService);
     this.route = inject(ActivatedRoute);
   }
@@ -53,34 +37,8 @@ export class SurveyComponent implements OnInit {
       this.receiveFileUploadMessage.bind(this),
       false
     );
-    this.route.params.subscribe((param) => {
-      this.solutionId = param['id'];
-    });
-
-    this.route.queryParams.subscribe((queryParam) => {
-      const { device, ...detailsOfProfile } = queryParam;
-      this.profileDetails = detailsOfProfile;
-      this.deviceType = device;
-    });
-    this.fetchSurveyDetails();
-  }
-
-  openConfirmationDialog(confirmationParams: any): Promise<boolean> {
-    const dialogRef = this.dialog.open(DialogComponent, {
-      data: confirmationParams
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      return result
-    });
-
-    if (confirmationParams?.timer == 3000) {
-      setTimeout(() => {
-        dialogRef.close();
-      }, 3000);
-    }
-    return dialogRef.afterClosed().toPromise();
-
+    this.deviceType = this.config.accessToken ? 'mobile' : 'portal';
+    this.fetchDetails();
   }
 
   receiveFileUploadMessage(event: any) {
@@ -95,7 +53,7 @@ export class SurveyComponent implements OnInit {
         files: [event.data.name],
       };
       this.baseApiService
-        .post(urlConfig[this.deviceType].presignedURL, payload)
+        .post(urlConfig[this.config.type][this.deviceType].presignedURL, payload)
         .pipe(
           catchError((err) => {
             this.fileUploadResponse = {
@@ -139,41 +97,39 @@ export class SurveyComponent implements OnInit {
     }
   }
 
-  fetchSurveyDetails() {
+  fetchDetails() {
     this.showSpinner = true;
     this.baseApiService
-      .post(
-        urlConfig[this.deviceType].surveyDetailsURL + `?solutionId=${this.solutionId}`,
-        this.profileDetails
+      .post(this.config.fetchUrl,{}
+      )
+      .pipe(
+        catchError((err) => {
+          this.errorDialog();
+          throw new Error('Could not fetch the details');
+        })
       )
       .subscribe((res: any) => {
-        if (res?.message == "Survey details fetched successfully") {
+        if (res?.result) {
           this.assessmentResult = res.result;
-        }
-        else if (res?.message == "Could not found solution details") {
-          this.redirectionFun("Could not found solution details.");
+        } else if (res?.message == 'Could not found solution details') {
+          this.redirectionFun('Could not found solution details.');
         } else {
           this.errorDialog();
         }
         this.showSpinner = false;
-      },
-      (err:any) => {
-        this.errorDialog();
-      }
-      );
+      });
   }
 
   async submitOrSaveEvent(event: any) {
-    console.log(event?.detail?.status)
     const evidenceData = { ...event.detail.data, status: event.detail.status };
-    if (event?.detail?.status == "submit") {
+    if (event?.detail?.status == 'submit') {
       const confirmationParams = {
-        title: "Confirmation",
-        message: "Are you sure you want to submit survey?",
+        title: 'Confirmation',
+        message: `Are you sure you want to submit ${this.config.type}?`,
         timer: 'fasle',
         actionBtns: true,
-        btnLeftLabel: "Cancel",
-        btnRightLabel: "Confirm"
+        btnLeftLabel: 'Cancel',
+        btnRightLabel: 'Confirm',
       };
       const response = await this.openConfirmationDialog(confirmationParams);
       if (!response) {
@@ -182,38 +138,41 @@ export class SurveyComponent implements OnInit {
     }
     this.showSpinner = true;
     this.baseApiService
-      .post(
-        urlConfig[this.deviceType].surveySubmissionURL +
-        this.assessmentResult.assessment.submissionId,
+      .post(this.config.updateUrl+this.assessmentResult.assessment.submissionId,
         {
-          ...this.profileDetails,
           evidence: evidenceData,
         }
       )
+      .pipe(
+        catchError((err) => {
+          this.errorDialog();
+          throw new Error(`Update api has failed`);
+        })
+      )
       .subscribe(async (res: any) => {
         this.showSpinner = false;
-        window.postMessage(res, '*');
         let responses = false;
-        if (event?.detail?.status == "draft") {
+        if (event?.detail?.status == 'draft') {
           const confirmationParams = {
-            title: "Success",
-            message: "Successfully your survey has been saved. Do you want to continue?",
+            title: 'Success',
+            message:
+              `Successfully your ${this.config.type} has been saved. Do you want to continue?`,
             timer: false,
             actionBtns: true,
-            btnLeftLabel: "Later",
-            btnRightLabel: "Continue"
+            btnLeftLabel: 'Later',
+            btnRightLabel: 'Continue',
           };
           responses = await this.openConfirmationDialog(confirmationParams);
         }
         if (!responses) {
-          let msgRes = event?.detail?.status == "draft" ? "Saved" : "Submited"
-          this.redirectionFun(`Thank you, your survey has been ${msgRes}`);
+          if(this.deviceType == 'mobile'){
+            window.postMessage(JSON.stringify({status:200, message:`${this.config.type} has been submitted successfully`}));
+            return;
+          }
+          let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submited';
+          this.redirectionFun(`Thank you, your ${this.config.type} has been ${msgRes}`);
         }
-      },
-        (err: any) => {
-          this.errorDialog();
-        }
-      );
+      });
   }
 
   redirectionFun(msg: string) {
@@ -221,15 +180,32 @@ export class SurveyComponent implements OnInit {
     this.router.navigateByUrl('/response');
   }
 
+  openConfirmationDialog(confirmationParams: any): Promise<boolean> {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: confirmationParams,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      return result;
+    });
+
+    if (confirmationParams?.timer == 3000) {
+      setTimeout(() => {
+        dialogRef.close();
+      }, 3000);
+    }
+    return dialogRef.afterClosed().toPromise();
+  }
+
   errorDialog() {
     const confirmationParams = {
-      title: "Error",
-      message: "Something went wrong, try again",
+      title: 'Error',
+      message: 'Something went wrong, try again',
       timer: 3000,
       actionBtns: false,
-      btnLeftLabel: "",
-      btnRightLabel: ""
+      btnLeftLabel: '',
+      btnRightLabel: '',
     };
-    this.openConfirmationDialog(confirmationParams)
+    this.openConfirmationDialog(confirmationParams);
   }
 }

@@ -1,12 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { SurveyComponent } from './survey/survey.component';
 import { ResponseComponent } from './shared/components/response/response.component';
+import { SurveyComponent } from './components/survey/survey.component';
+import { ObservationComponent } from './components/observation/observation.component';
 
 const routes: Routes = [
   { path: 'survey/:id', 
     component:SurveyComponent,
+  },
+  {
+    path:'observation/:id/:entity',
+    component:ObservationComponent
   },
   { path: 'response', 
     component:ResponseComponent,
