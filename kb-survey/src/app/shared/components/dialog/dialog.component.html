@@ -1,0 +1,11 @@
+<h2 mat-dialog-title [ngClass]="{'success':data?.title == 'Success', 'error':data?.title == 'Error'}">{{data?.title}}</h2>
+<mat-dialog-content>
+    {{data?.message}}
+</mat-dialog-content>
+<div  *ngIf="data?.actionBtns">
+  <hr class="partition">
+<mat-dialog-actions>
+  <button mat-button (click)="onCancle()" class="purple-border-button borderRadius" mat-dialog-close>{{data?.btnLeftLabel}}</button>
+  <button mat-button [mat-dialog-close]="true" class="purple-button borderRadius">{{data?.btnRightLabel}}</button>
+</mat-dialog-actions>
+</div>

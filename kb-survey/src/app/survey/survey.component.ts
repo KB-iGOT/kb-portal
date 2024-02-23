@@ -1,14 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import urlConfig from '../config/url.config.json';
 import { ApiBaseService } from '../services/base-api/api-base.service';
 import { catchError } from 'rxjs';
+import {
+  MatDialog
+} from '@angular/material/dialog';
+import { DialogComponent } from '../shared/components/dialog/dialog.component';
+import { ResponseService } from '../services/observable/response.service';
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
   styleUrls: ['./survey.component.scss'],
 })
 export class SurveyComponent implements OnInit {
+  showSpinner: boolean = false;
   assessmentResult: any;
   fileUploadResponse: any = null;
   baseApiService;
@@ -21,7 +27,8 @@ export class SurveyComponent implements OnInit {
   role: any;
   profileDetails: any;
 
-  constructor() {
+  constructor(private responseService: ResponseService,
+    public dialog: MatDialog, private router: Router) {
     this.baseApiService = inject(ApiBaseService);
     this.route = inject(ActivatedRoute);
   }
@@ -37,11 +44,27 @@ export class SurveyComponent implements OnInit {
     });
 
     this.route.queryParams.subscribe((queryParam) => {
-      const { solutionId, ...detailsOfProfile } = queryParam;
-      this.profileDetails = detailsOfProfile;
+      this.profileDetails = queryParam;
+    });
+    this.fetchSurveyDetails();
+  }
+
+  openConfirmationDialog(confirmationParams: any): Promise<boolean> {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: confirmationParams
     });
 
-    this.fetchSurveyDetails();
+    dialogRef.afterClosed().subscribe(result => {
+      return result
+    });
+
+    if (confirmationParams?.timer == 3000) {
+      setTimeout(() => {
+        dialogRef.close();
+      }, 3000);
+    }
+    return dialogRef.afterClosed().toPromise();
+
   }
 
   receiveFileUploadMessage(event: any) {
@@ -101,30 +124,96 @@ export class SurveyComponent implements OnInit {
   }
 
   fetchSurveyDetails() {
+    this.showSpinner = true;
     this.baseApiService
       .post(
         urlConfig.surveyDetailsURL + `?solutionId=${this.solutionId}`,
         this.profileDetails
       )
       .subscribe((res: any) => {
-        this.assessmentResult = res.result;
-        console.log(this.assessmentResult);
-      });
+        if (res?.message == "Survey details fetched successfully") {
+          this.assessmentResult = res.result;
+        }
+        else if (res?.message == "Could not found solution details") {
+          this.redirectionFun("Could not found solution details.");
+        } else {
+          this.errorDialog();
+        }
+        this.showSpinner = false;
+      },
+      (err:any) => {
+        this.errorDialog();
+      }
+      );
   }
 
-  submitOrSaveEvent(event: any): void {
+  async submitOrSaveEvent(event: any) {
+    console.log(event?.detail?.status)
     const evidenceData = { ...event.detail.data, status: event.detail.status };
+    if (event?.detail?.status == "submit") {
+      const confirmationParams = {
+        title: "Confirmation",
+        message: "Are you sure you want to submit survey?",
+        timer: 'fasle',
+        actionBtns: true,
+        btnLeftLabel: "Cancel",
+        btnRightLabel: "Confirm"
+      };
+      const response = await this.openConfirmationDialog(confirmationParams);
+      if (!response) {
+        return;
+      }
+    }
+    this.showSpinner = true;
     this.baseApiService
       .post(
         urlConfig.surveySubmissionURL +
-          this.assessmentResult.assessment.submissionId,
+        this.assessmentResult.assessment.submissionId,
         {
           ...this.profileDetails,
           evidence: evidenceData,
         }
       )
-      .subscribe((res: any) => {
+      .subscribe(async (res: any) => {
+        this.showSpinner = false;
         window.postMessage(res, '*');
-      });
+        let responses = false;
+        if (event?.detail?.status == "draft") {
+          const confirmationParams = {
+            title: "Success",
+            message: "Successfully your survey has been saved. Do you want to continue?",
+            timer: false,
+            actionBtns: true,
+            btnLeftLabel: "Later",
+            btnRightLabel: "Continue"
+          };
+          responses = await this.openConfirmationDialog(confirmationParams);
+        }
+        if (!responses) {
+          let msgRes = event?.detail?.status == "draft" ? "Saved" : "Submited"
+          this.redirectionFun(`Thank you, your survey has been ${msgRes}`);
+        }
+      },
+        (err: any) => {
+          this.errorDialog();
+        }
+      );
+  }
+
+  redirectionFun(msg: string) {
+    this.responseService.setResponse(msg);
+    this.router.navigateByUrl('/response');
+  }
+
+  errorDialog() {
+    const confirmationParams = {
+      title: "Error",
+      message: "Something went wrong, try again",
+      timer: 3000,
+      actionBtns: false,
+      btnLeftLabel: "",
+      btnRightLabel: ""
+    };
+    this.openConfirmationDialog(confirmationParams)
   }
 }
