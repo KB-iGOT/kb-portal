@@ -26,8 +26,8 @@ export class SurveyComponent implements OnInit {
     this.route.queryParamMap.subscribe((queryParam:any) => {
       if(queryParam.has('bearer')){
         this.deviceType = 'mobile';
-        this.authorization = queryParam['bearer'];
-        this.accessToken = queryParam['user']
+        this.authorization = queryParam.get('bearer');
+        this.accessToken = queryParam.get('user');
       }else{
         this.deviceType = 'portal';
       }

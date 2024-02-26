@@ -6,7 +6,8 @@ import { catchError } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { ResponseService } from '../../../services/observable/response.service';
-import { UrlConfig, InputConfig} from '../../../interfaces/main.interface';
+import { UrlConfig, InputConfig } from '../../../interfaces/main.interface';
+import { HttpHeaders } from '@angular/common/http';
 @Component({
   selector: 'app-questionnaire',
   templateUrl: './questionnaire.component.html',
@@ -21,6 +22,7 @@ export class QuestionnaireComponent implements OnInit {
   route;
   profileDetails: any;
   deviceType!: keyof UrlConfig;
+  headers!: HttpHeaders;
 
   constructor(
     private responseService: ResponseService,
@@ -38,6 +40,13 @@ export class QuestionnaireComponent implements OnInit {
       false
     );
     this.deviceType = this.config.accessToken ? 'mobile' : 'portal';
+    if(this.config.accessToken){
+      this.headers = new HttpHeaders({
+          'Authorization': this.config.authorization as string,
+          'X-authenticated-user-token':this.config.accessToken
+        })
+    }
+
     this.fetchDetails();
   }
 
@@ -53,7 +62,10 @@ export class QuestionnaireComponent implements OnInit {
         files: [event.data.name],
       };
       this.baseApiService
-        .post(urlConfig[this.config.type][this.deviceType].presignedURL, payload)
+        .post(
+          urlConfig[this.config.type][this.deviceType].presignedURL,
+          payload
+        )
         .pipe(
           catchError((err) => {
             this.fileUploadResponse = {
@@ -100,7 +112,10 @@ export class QuestionnaireComponent implements OnInit {
   fetchDetails() {
     this.showSpinner = true;
     this.baseApiService
-      .post(this.config.fetchUrl,{}
+      .post(
+        this.config.fetchUrl,
+        {},
+        this.headers
       )
       .pipe(
         catchError((err) => {
@@ -138,14 +153,24 @@ export class QuestionnaireComponent implements OnInit {
     }
     this.showSpinner = true;
     this.baseApiService
-      .post(this.config.updateUrl+this.assessmentResult.assessment.submissionId,
+      .post(
+        this.config.updateUrl + this.assessmentResult.assessment.submissionId,
         {
           evidence: evidenceData,
-        }
+        },
+        this.headers
       )
       .pipe(
         catchError((err) => {
           this.errorDialog();
+          if (this.deviceType == 'mobile') {
+            window.postMessage(
+              JSON.stringify({
+                status: 400,
+                message: `Error while submission`,
+              })
+            );
+          }
           throw new Error(`Update api has failed`);
         })
       )
@@ -155,8 +180,7 @@ export class QuestionnaireComponent implements OnInit {
         if (event?.detail?.status == 'draft') {
           const confirmationParams = {
             title: 'Success',
-            message:
-              `Successfully your ${this.config.type} has been saved. Do you want to continue?`,
+            message: `Successfully your ${this.config.type} has been saved. Do you want to continue?`,
             timer: false,
             actionBtns: true,
             btnLeftLabel: 'Later',
@@ -165,12 +189,19 @@ export class QuestionnaireComponent implements OnInit {
           responses = await this.openConfirmationDialog(confirmationParams);
         }
         if (!responses) {
-          if(this.deviceType == 'mobile'){
-            window.postMessage(JSON.stringify({status:200, message:`${this.config.type} has been submitted successfully`}));
+          if (this.deviceType == 'mobile') {
+            window.postMessage(
+              JSON.stringify({
+                status: 200,
+                message: `${this.config.type} has been submitted successfully`,
+              })
+            );
             return;
           }
           let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submited';
-          this.redirectionFun(`Thank you, your ${this.config.type} has been ${msgRes}`);
+          this.redirectionFun(
+            `Thank you, your ${this.config.type} has been ${msgRes}`
+          );
         }
       });
   }

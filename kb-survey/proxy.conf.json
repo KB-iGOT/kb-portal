@@ -1,11 +1,16 @@
 {
     "/api": {
-      "target": "http://localhost:3000",
+      "target": "https://c1c1-106-51-189-222.ngrok-free.app",
       "secure": false,
       "changeOrigin": true
     },
     "/v1": {
-      "target": "http://localhost:3000",
+      "target": "https://c1c1-106-51-189-222.ngrok-free.app",
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/assessment": {
+      "target": "https://c1c1-106-51-189-222.ngrok-free.app",
       "secure": false,
       "changeOrigin": true
     }

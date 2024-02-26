@@ -13,13 +13,13 @@
     },
     "observation":{
         "portal": {
-            "detailsURL": "/api/surveys/mlsurvey/v1/details",
-            "updateURL": "/api/surveySubmissions/mlsurvey/v1/update/",
+            "detailsURL": "/api/observations/mlsurvey/v1/assessment",
+            "updateURL": "/api/observationSubmissions/mlsurvey/v1/update/",
             "presignedURL": "/v1/cloud-services/files/preSignedUrls?serviceUpload=true"
         },
         "mobile":{
-            "detailsURL": "/api/surveys/mlsurvey/v1/details",
-            "updateURL": "/api/surveySubmissions/mlsurvey/v1/update/",
+            "detailsURL": "/api/observations/mlsurvey/v1/assessment",
+            "updateURL": "/api/observationSubmissions/mlsurvey/v1/update/",
             "presignedURL": "/v1/cloud-services/files/preSignedUrls?serviceUpload=true"
         }
     }
