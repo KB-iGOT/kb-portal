@@ -8,6 +8,7 @@ import { DialogComponent } from '../../../shared/components/dialog/dialog.compon
 import { ResponseService } from '../../../services/observable/response.service';
 import { UrlConfig, InputConfig } from '../../../interfaces/main.interface';
 import { HttpHeaders } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-questionnaire',
   templateUrl: './questionnaire.component.html',
@@ -80,7 +81,7 @@ export class QuestionnaireComponent implements OnInit {
         .subscribe((response: any) => {
           const presignedUrlData = response['result'][submissionId].files[0];
           this.baseApiService
-            .post(presignedUrlData.url, formData, this.headers)
+            .patch(presignedUrlData.url, formData, this.headers)
             .pipe(
               catchError((err) => {
                 this.fileUploadResponse = {
@@ -92,11 +93,13 @@ export class QuestionnaireComponent implements OnInit {
               })
             )
             .subscribe((cloudResponse: any) => {
+              const previewURL = presignedUrlData.downloadableUrl.split('?')[0]
               const obj: any = {
                 name: event.data.name,
                 url: presignedUrlData.url.split('?')[0],
-                previewUrl: presignedUrlData.downloadableUrl.split('?')[0],
+                previewUrl: previewURL.replace(environment.storageURL,`${environment.baseURL}/content-store`),
               };
+              console.log(obj.previewUrl)
               for (const key of Object.keys(presignedUrlData.payload)) {
                 obj[key] = presignedUrlData['payload'][key];
               }
