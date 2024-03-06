@@ -80,7 +80,7 @@ export class QuestionnaireComponent implements OnInit {
         .subscribe((response: any) => {
           const presignedUrlData = response['result'][submissionId].files[0];
           this.baseApiService
-            .put(presignedUrlData.url, formData, this.headers)
+            .post(presignedUrlData.url, formData, this.headers)
             .pipe(
               catchError((err) => {
                 this.fileUploadResponse = {
