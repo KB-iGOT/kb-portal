@@ -40,11 +40,11 @@ export class QuestionnaireComponent implements OnInit {
       false
     );
     this.deviceType = this.config.accessToken ? 'mobile' : 'portal';
-    if(this.config.accessToken){
+    if (this.config.accessToken) {
       this.headers = new HttpHeaders({
-          'Authorization': this.config.authorization as string,
-          'X-authenticated-user-token':this.config.accessToken
-        })
+        Authorization: this.config.authorization as string,
+        'X-authenticated-user-token': this.config.accessToken,
+      });
     }
 
     this.fetchDetails();
@@ -64,7 +64,8 @@ export class QuestionnaireComponent implements OnInit {
       this.baseApiService
         .post(
           urlConfig[this.config.type][this.deviceType].presignedURL,
-          payload
+          payload,
+          this.headers
         )
         .pipe(
           catchError((err) => {
@@ -79,7 +80,7 @@ export class QuestionnaireComponent implements OnInit {
         .subscribe((response: any) => {
           const presignedUrlData = response['result'][submissionId].files[0];
           this.baseApiService
-            .put(presignedUrlData.url, formData)
+            .put(presignedUrlData.url, formData, this.headers)
             .pipe(
               catchError((err) => {
                 this.fileUploadResponse = {
@@ -112,11 +113,7 @@ export class QuestionnaireComponent implements OnInit {
   fetchDetails() {
     this.showSpinner = true;
     this.baseApiService
-      .post(
-        this.config.fetchUrl,
-        {},
-        this.headers
-      )
+      .post(this.config.fetchUrl, {}, this.headers)
       .pipe(
         catchError((err) => {
           this.errorDialog();
@@ -196,12 +193,12 @@ export class QuestionnaireComponent implements OnInit {
                 message: `${this.config.type} has been submitted successfully`,
               })
             );
-            return;
           }
           let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submited';
-          this.redirectionFun(
-            `Thank you, your ${this.config.type} has been ${msgRes}`
-          );
+          msgRes == 'saved' &&
+            this.redirectionFun(
+              `Thank you, your ${this.config.type} has been ${msgRes}`
+            );
         }
       });
   }

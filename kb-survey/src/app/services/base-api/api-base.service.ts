@@ -19,7 +19,7 @@ export class ApiBaseService {
   }
 
   put<T>(url: string, body: any, headers?: HttpHeaders): Observable<T> {
-    return this.http.put<T>(this.baseURL+url, body, { headers });
+    return this.http.put<T>(url, body, { headers });
   }
 
   delete<T>(url: string): Observable<T> {
