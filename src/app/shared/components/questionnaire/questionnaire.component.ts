@@ -93,13 +93,11 @@ export class QuestionnaireComponent implements OnInit {
               })
             )
             .subscribe((cloudResponse: any) => {
-              const previewURL = presignedUrlData.downloadableUrl.split('?')[0]
               const obj: any = {
                 name: event.data.name,
                 url: presignedUrlData.url.split('?')[0],
-                previewUrl: previewURL.replace(environment.storageURL,`${environment.baseURL}/content-store`),
+                previewUrl: presignedUrlData.downloadableUrl.split('?')[0],
               };
-              console.log(obj.previewUrl)
               for (const key of Object.keys(presignedUrlData.payload)) {
                 obj[key] = presignedUrlData['payload'][key];
               }
