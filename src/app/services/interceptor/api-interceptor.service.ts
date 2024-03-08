@@ -8,10 +8,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import secret from '../../../../secret.json';
-import { ResponseService } from '../observable/response.service';
-import { Router } from '@angular/router';
+import { catchError} from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
