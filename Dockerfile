@@ -7,7 +7,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN ng build --configuration=production --base-href /survey/
+RUN ng build --configuration=production
 
 # Stage 2: Create a lightweight container with Node.js to serve the Angular application
 FROM node:18.12.1 AS final
