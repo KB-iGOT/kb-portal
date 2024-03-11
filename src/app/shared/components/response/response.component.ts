@@ -13,7 +13,9 @@ export class ResponseComponent implements OnInit {
 
   ngOnInit(): void {
     this.responseService.sendResponse.subscribe((value) => {
-      this.response = value;
+      if(typeof value == 'string'){
+        this.response = value;
+      }
     });
   }
 

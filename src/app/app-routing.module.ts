@@ -20,6 +20,10 @@ const routes: Routes = [
     path: '',
     component: AppComponent,
   },
+  {
+    path: '**',
+    component: ResponseComponent,
+  },
 ];
 
 @NgModule({
