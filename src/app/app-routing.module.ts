@@ -6,7 +6,7 @@ import { SurveyComponent } from './components/survey/survey.component';
 import { ObservationComponent } from './components/observation/observation.component';
 
 const routes: Routes = [
-  { path: 'survey/:id', 
+  { path: 'mlsurvey/:id', 
     component:SurveyComponent,
   },
   {
