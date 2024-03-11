@@ -17,6 +17,7 @@ import { ResponseComponent } from './shared/components/response/response.compone
 import { QuestionnaireComponent } from './shared/components/questionnaire/questionnaire.component';
 import { ObservationComponent } from './components/observation/observation.component';
 import { SurveyComponent } from './components/survey/survey.component';
+import { CookieService } from 'ngx-cookie-service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,7 +45,7 @@ import { SurveyComponent } from './components/survey/survey.component';
     provide: HTTP_INTERCEPTORS,
     useClass: ApiInterceptorService,
     multi: true
-  }, ApiBaseService],
+  }, ApiBaseService, CookieService],
   bootstrap: [AppComponent],
   schemas:[CUSTOM_ELEMENTS_SCHEMA]
 })
