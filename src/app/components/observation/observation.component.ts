@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { InputConfig, UrlConfig } from 'src/app/interfaces/main.interface';
 import { ApiBaseService } from 'src/app/services/base-api/api-base.service';
@@ -48,7 +48,6 @@ export class ObservationComponent implements OnInit {
       this.deviceType = 'portal';
     }
     this.route.params.subscribe((param:any) => {
-      console.log(param)
       this.solutionId = param['id'];
       this.entityId = param['entity']
     });
