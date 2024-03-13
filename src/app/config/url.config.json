@@ -15,11 +15,13 @@
         "portal": {
             "detailsURL": "/api/observations/mlsurvey/v1/assessment",
             "updateURL": "/api/observationSubmissions/mlsurvey/v1/update/",
+            "addEntityURL": "/api/observations/mlsurvey/v1/entities",
             "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
         },
         "mobile":{
             "detailsURL": "/api/observations/mlsurvey/v1/assessment",
             "updateURL": "/api/observationSubmissions/mlsurvey/v1/update/",
+            "addEntityURL": "/api/observations/mlsurvey/v1/entities",
             "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
         }
     }

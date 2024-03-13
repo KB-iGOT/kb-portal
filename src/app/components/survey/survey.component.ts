@@ -36,13 +36,12 @@ export class SurveyComponent implements OnInit {
     this.route.params.subscribe((param:any) => {
       this.solutionId = param['id'];
     });
-
     this.configuration = {
       type:'survey',
       solutionId:this.solutionId,
       fetchUrl:`${urlConfig.survey[this.deviceType].detailsURL}?solutionId=${this.solutionId}`,
       updateUrl:`${urlConfig.survey[this.deviceType].updateURL}`,
-      ...this.deviceType == 'mobile' && {authorization:`Bearer ${this.authorization}`,accessToken:this.accessToken}
+      ...this.deviceType == 'mobile' && {authorization:`${this.authorization}`,accessToken:this.accessToken}
     }
   }
 

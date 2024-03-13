@@ -43,11 +43,10 @@ export class QuestionnaireComponent implements OnInit {
     this.deviceType = this.config.accessToken ? 'mobile' : 'portal';
     if (this.config.accessToken) {
       this.headers = new HttpHeaders({
-        Authorization: this.config.authorization as string,
+        Authorization: `Bearer ${this.config.authorization}` as string,
         'X-authenticated-user-token': this.config.accessToken,
       });
     }
-
     this.fetchDetails();
   }
 
@@ -114,8 +113,11 @@ export class QuestionnaireComponent implements OnInit {
 
   fetchDetails() {
     this.showSpinner = true;
+    let payload: any = {
+      course: this.config.entityId,
+    };
     this.baseApiService
-      .post(this.config.fetchUrl, {}, this.headers)
+      .post(this.config.fetchUrl, payload, this.headers)
       .pipe(
         catchError((err) => {
           this.errorDialog();
