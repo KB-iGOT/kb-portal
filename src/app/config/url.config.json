@@ -1,9 +1,9 @@
 {
     "survey":{
         "portal": {
-            "detailsURL": "/api/surveys/mlsurvey/v1/details",
-            "updateURL": "/api/surveySubmissions/mlsurvey/v1/update/",
-            "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
+            "detailsURL": "/api/proxies/v8/surveys/mlsurvey/v1/details",
+            "updateURL": "/api/proxies/v8/surveySubmissions/mlsurvey/v1/update/",
+            "presignedURL": "/api/proxies/v8/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
         },
         "mobile":{
             "detailsURL": "/api/surveys/mlsurvey/v1/details",
@@ -13,10 +13,10 @@
     },
     "observation":{
         "portal": {
-            "detailsURL": "/api/observations/mlsurvey/v1/assessment",
-            "updateURL": "/api/observationSubmissions/mlsurvey/v1/update/",
-            "addEntityURL": "/api/observations/mlsurvey/v1/entities",
-            "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
+            "detailsURL": "/api/proxies/v8/observations/mlsurvey/v1/assessment",
+            "updateURL": "/api/proxies/v8/observationSubmissions/mlsurvey/v1/update/",
+            "addEntityURL": "/api/proxies/v8/observations/mlsurvey/v1/entities",
+            "presignedURL": "/api/proxies/v8/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
         },
         "mobile":{
             "detailsURL": "/api/observations/mlsurvey/v1/assessment",
