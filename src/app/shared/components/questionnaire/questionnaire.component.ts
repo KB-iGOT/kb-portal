@@ -79,8 +79,9 @@ export class QuestionnaireComponent implements OnInit {
         )
         .subscribe((response: any) => {
           const presignedUrlData = response['result'][submissionId].files[0];
+          const uploadURL = this.deviceType = 'mobile' ? presignedUrlData.url : presignedUrlData.url.replace('/api/','/apis/proxies/v8/')
           this.baseApiService
-            .patch(presignedUrlData.url, formData, this.headers)
+            .patch(uploadURL, formData, this.headers)
             .pipe(
               catchError((err) => {
                 this.fileUploadResponse = {
