@@ -26,6 +26,12 @@ export class SurveyComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    setTimeout(() => {
+      this.checkCookies();
+    },500)
+  }
+
+  checkCookies(){
     if(this.cookieService.check('bearer') && this.cookieService.check('user')){
       this.authorization = this.cookieService.get('bearer');
       this.accessToken = this.cookieService.get('user');

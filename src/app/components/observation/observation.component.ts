@@ -35,6 +35,10 @@ export class ObservationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.checkCookies();
+  }
+
+  checkCookies(){
     if(this.cookieService.check('bearer') && this.cookieService.check('user')){
       this.authorization = this.cookieService.get('bearer');
       this.accessToken = this.cookieService.get('user');
@@ -53,7 +57,6 @@ export class ObservationComponent implements OnInit {
     });
     this.addEntity();
   }
-
 
   addEntity() {
     this.showSpinner = true;

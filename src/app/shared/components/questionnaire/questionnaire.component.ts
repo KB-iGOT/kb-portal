@@ -166,7 +166,7 @@ export class QuestionnaireComponent implements OnInit {
         catchError((err) => {
           this.errorDialog();
           if (this.deviceType == 'mobile') {
-            window.postMessage(
+            window.parent.postMessage(
               JSON.stringify({
                 status: 400,
                 message: `Error while submission`,
@@ -190,21 +190,19 @@ export class QuestionnaireComponent implements OnInit {
           };
           responses = await this.openConfirmationDialog(confirmationParams);
         }
+        let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submited';
         if (!responses) {
-          if (this.deviceType == 'mobile') {
-            window.postMessage(
+            window.parent.postMessage(
               JSON.stringify({
                 status: 200,
-                message: `${this.config.type} has been submitted successfully`,
+                message: `${this.config.type} has been ${msgRes} successfully`,
               })
             );
           }
-          let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submited';
           msgRes == 'saved' &&
             this.redirectionFun(
               `Thank you, your ${this.config.type} has been ${msgRes}`
             );
-        }
       });
   }
 
