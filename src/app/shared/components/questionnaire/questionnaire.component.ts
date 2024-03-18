@@ -191,18 +191,20 @@ export class QuestionnaireComponent implements OnInit {
           responses = await this.openConfirmationDialog(confirmationParams);
         }
         let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submited';
+
         if (!responses) {
             window.parent.postMessage(
               JSON.stringify({
                 status: 200,
-                message: `${this.config.type} has been ${msgRes} successfully`,
+                message: `${this.config.type} has been submitted successfully`,
               })
             );
-          }
-          msgRes == 'saved' &&
+            
             this.redirectionFun(
               `Thank you, your ${this.config.type} has been ${msgRes}`
             );
+          }
+          
       });
   }
 
