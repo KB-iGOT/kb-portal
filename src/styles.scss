@@ -1,14 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
-@font-face {
-    font-family: 'LatoFont';
-    src: url('../src/assets/fonts/Lato-Regular.ttf') format('truetype');
-}
-
-body{
-    font-family: 'LatoFont',sans-serif;
-}
 :root {
     --primary-color: #1B4CA1;
     --btn-outline: #1B4CA1;
