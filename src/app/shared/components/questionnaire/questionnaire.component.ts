@@ -79,7 +79,7 @@ export class QuestionnaireComponent implements OnInit {
         )
         .subscribe((response: any) => {
           const presignedUrlData = response['result'][submissionId].files[0];
-          const uploadURL = this.deviceType = 'mobile' ? presignedUrlData.url : presignedUrlData.url.replace('/api/','/apis/proxies/v8/')
+          const uploadURL = this.deviceType == 'mobile' ? presignedUrlData.url : presignedUrlData.url.replace('/api/','/apis/proxies/v8/')
           this.baseApiService
             .patch(uploadURL, formData, this.headers)
             .pipe(
@@ -199,7 +199,7 @@ export class QuestionnaireComponent implements OnInit {
                 message: `${this.config.type} has been submitted successfully`,
               })
             );
-            
+
             this.redirectionFun(
               `Thank you, your ${this.config.type} has been ${msgRes}`
             );
