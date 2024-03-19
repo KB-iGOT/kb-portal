@@ -26,11 +26,11 @@ button {
   justify-content: space-between;
 }
 
-.mat-dialog-actions button {
-  padding: 7px 25px;
-  font-size: 15px;
-  border-radius: 17px;
-}
+// .mat-dialog-actions button {
+//   padding: 7px 25px;
+//   font-size: 15px;
+//   border-radius: 17px;
+// }
 
 .mat-dialog-container {
   min-width: max-content;
@@ -50,4 +50,56 @@ color: var(--primary-color);
 .mat-dialog-actions .purple-border-button:hover {
   background-color: var(--primary-color);
   color: var(--general-btn-text-color);
+}
+
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--general-btn-text-color);
+  cursor: pointer;
+  border: solid transparent 1px;
+  border-radius: 4px;
+  padding: 0.75rem;
+  min-width: 5.6rem;
+  min-height: 2.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background-color: var(--general-btn-hover-bg);
+  color: var(--primary-color);
+  border: solid var(--primary-color) 1px;
+}
+
+.btn-outline-secondary {
+  background-color: var(--secondary-btn-bg);
+  color: var(--primary-color);
+  border: solid var(--primary-color) 1px;
+  border-radius: 4px;
+  padding: 0.75rem;
+  cursor: pointer;
+  min-width: 5.6rem;
+  min-height: 2.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.section-header-style {
+  margin-bottom: 0;
+  // color: var(--primary-color) !important;
+  font-size: 24px;
+  letter-spacing: 0;
+  line-height: 36px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.body-text {
+  color: var(--question-tip);
+  font-size: 16px;
+  letter-spacing: 0.12;
+  line-height: 36px;
+  font-weight: 600;
+  font-family: 'Lato', sans-serif;
 }
