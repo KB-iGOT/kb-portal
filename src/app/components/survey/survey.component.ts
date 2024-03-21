@@ -27,7 +27,7 @@ export class SurveyComponent implements OnInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.checkCookies();
-    },500)
+    },2000)
   }
 
   checkCookies(){
