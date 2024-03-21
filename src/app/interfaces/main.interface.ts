@@ -22,6 +22,6 @@ export interface InputConfig {
   entityId?: string;
   fetchUrl: string;
   updateUrl: string;
-  accessToken?: string;
-  authorization?: string;
+  accessToken?: string | null | undefined;
+  authorization?: string | null | undefined;
 }

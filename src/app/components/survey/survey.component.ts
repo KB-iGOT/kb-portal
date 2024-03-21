@@ -1,54 +1,80 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ApiBaseService } from 'src/app/services/base-api/api-base.service';
-import { InputConfig,UrlConfig } from 'src/app/interfaces/main.interface';
-import urlConfig from 'src/app/config/url.config.json';
 import { CookieService } from 'ngx-cookie-service';
+import { ApiBaseService } from 'src/app/services/base-api/api-base.service';
+import { InputConfig, UrlConfig } from 'src/app/interfaces/main.interface';
+import urlConfig from 'src/app/config/url.config.json';
 
 @Component({
   selector: 'app-survey',
   templateUrl: './survey.component.html',
-  styleUrls: ['./survey.component.scss']
+  styleUrls: ['./survey.component.scss'],
 })
 export class SurveyComponent implements OnInit {
-  baseApiService: any;
-  route: ActivatedRoute;
   solutionId!: string;
-  configuration!:InputConfig;
-  deviceType!:keyof UrlConfig;
-  authorization: any;
-  accessToken: any;
-  cookieService: CookieService;
-  constructor() { 
-    this.baseApiService = inject(ApiBaseService);
-    this.route = inject(ActivatedRoute);
-    this.cookieService = inject(CookieService);
-  }
+  configuration!: InputConfig;
+  deviceType!: keyof UrlConfig;
+  showSpinner: boolean = true;
+  pollingInterval: any;
+  bearer: string | null | undefined;
+  user: string | null | undefined;
+  connectSid: string | undefined;
+
+  constructor(
+    private route: ActivatedRoute,
+    private cookieService: CookieService
+  ) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.checkCookies();
-    },500)
-  }
-
-  checkCookies(){
-    if(this.cookieService.check('bearer') && this.cookieService.check('user')){
-      this.authorization = this.cookieService.get('bearer');
-      this.accessToken = this.cookieService.get('user');
-      this.deviceType = 'mobile';
-    }else{
-      this.deviceType = 'portal';
-    }
-    this.route.params.subscribe((param:any) => {
+    this.route.params.subscribe((param: any) => {
       this.solutionId = param['id'];
     });
-    this.configuration = {
-      type:'survey',
-      solutionId:this.solutionId,
-      fetchUrl:`${urlConfig.survey[this.deviceType].detailsURL}?solutionId=${this.solutionId}`,
-      updateUrl:`${urlConfig.survey[this.deviceType].updateURL}`,
-      ...this.deviceType == 'mobile' && {authorization:`${this.authorization}`,accessToken:this.accessToken}
+
+    this.checkCookies();
+
+    this.startPollingIfNeeded();
+  }
+
+  checkCookies() {
+    this.bearer = this.cookieService.get('bearer') || localStorage.getItem('bearer');
+    this.user = this.cookieService.get('user') || localStorage.getItem('user');
+    this.connectSid = this.cookieService.get('connect.sid');
+
+    if (this.bearer && this.user) {
+      console.log('Mobile device!!!!!!!!!!!!!');
+      this.deviceType = 'mobile';
+      clearInterval(this.pollingInterval); 
+    } else if (this.connectSid) {
+      console.log('Portal device!!!!!!!!!!!!!');
+      this.deviceType = 'portal';
+      clearInterval(this.pollingInterval); 
+    } else {
+      console.log('Cookies not set yet, continuing polling...');
+    }
+
+    this.updateConfiguration();
+  }
+
+  updateConfiguration() {
+    if (this.deviceType === 'mobile' || this.deviceType === 'portal') {
+      this.configuration = {
+        type: 'survey',
+        solutionId: this.solutionId,
+        fetchUrl: `${urlConfig.survey[this.deviceType].detailsURL}?solutionId=${this.solutionId}`,
+        updateUrl: `${urlConfig.survey[this.deviceType].updateURL}`,
+        ...this.deviceType == 'mobile' && {authorization:`${this.bearer}`,accessToken:this.user}
+      };
+      this.showSpinner = false;
+    } else {
+      this.startPollingIfNeeded();
     }
   }
 
+  startPollingIfNeeded() {
+    if (!this.pollingInterval) {
+      this.pollingInterval = setInterval(() => {
+        this.checkCookies();
+      }, 1000);
+    }
+  }
 }
