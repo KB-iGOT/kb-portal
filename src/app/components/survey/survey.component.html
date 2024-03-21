@@ -1,4 +1,4 @@
-<ng-container *ngIf="configuration">
+<ng-container *ngIf="!showSpinner && configuration">
     <app-questionnaire [config]="configuration"></app-questionnaire>
 </ng-container>
 <app-spinner *ngIf="showSpinner"></app-spinner>
