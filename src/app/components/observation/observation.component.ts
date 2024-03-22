@@ -39,11 +39,16 @@ export class ObservationComponent implements OnInit {
   }
 
   checkCookies(){
-    if(this.cookieService.check('bearer') && this.cookieService.check('user')){
-      this.authorization = this.cookieService.get('bearer');
-      this.accessToken = this.cookieService.get('user');
-      this.deviceType = 'mobile';
+    this.route.params.subscribe((param:any) => {
+      this.solutionId = param['id'];
+      this.entityId = param['entity']
+    });
+    
+    this.authorization = this.cookieService.get('API-KEY') || localStorage.getItem('API-KEY');
+    this.accessToken = this.cookieService.get('USER-TOKEN') || localStorage.getItem('USER-TOKEN');
 
+    if(this.authorization && this.accessToken){
+      this.deviceType = 'mobile';
       this.headers = new HttpHeaders({
         Authorization: `Bearer ${this.authorization}` as string,
         'X-authenticated-user-token': this.accessToken,
@@ -51,10 +56,6 @@ export class ObservationComponent implements OnInit {
     }else{
       this.deviceType = 'portal';
     }
-    this.route.params.subscribe((param:any) => {
-      this.solutionId = param['id'];
-      this.entityId = param['entity']
-    });
     this.addEntity();
   }
 

@@ -31,8 +31,8 @@ export class SurveyComponent implements OnInit {
   }
 
   checkCookies(){
-    this.authorization = this.cookieService.get('bearer') || localStorage.getItem('bearer');
-    this.accessToken = this.cookieService.get('user') || localStorage.getItem('user');
+    this.authorization = this.cookieService.get('API-KEY') || localStorage.getItem('API-KEY');
+    this.accessToken = this.cookieService.get('USER-TOKEN') || localStorage.getItem('USER-TOKEN');
     this.deviceType = this.authorization && this.accessToken ? 'mobile' : 'portal';
     this.route.params.subscribe((param:any) => {
       this.solutionId = param['id'];
