@@ -86,7 +86,7 @@ export class QuestionnaireComponent implements OnInit {
     console.log('formData',formData);
 
           this.baseApiService
-            .patch(uploadURL, formData, this.headers)
+            .postWithFullURL(uploadURL, formData, this.headers)
             .pipe(
               catchError((err) => {
                 this.fileUploadResponse = {
