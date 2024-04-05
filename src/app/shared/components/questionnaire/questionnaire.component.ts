@@ -50,6 +50,8 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   receiveFileUploadMessage(event: any) {
+    debugger
+    console.log('event',event);
     if (event.data.question_id) {
       const formData = new FormData();
       formData.append('file', event.data.file);
@@ -60,6 +62,7 @@ export class QuestionnaireComponent implements OnInit {
       payload['request'][submissionId] = {
         files: [event.data.name],
       };
+      console.log('payload',payload);
       this.baseApiService
         .post(
           urlConfig[this.config.type][this.deviceType].presignedURL,
@@ -77,8 +80,11 @@ export class QuestionnaireComponent implements OnInit {
           })
         )
         .subscribe((response: any) => {
+      console.log('response',response);
           const presignedUrlData = response['result'][submissionId].files[0];
           const uploadURL = this.deviceType == 'mobile' ? presignedUrlData.url : presignedUrlData.url.replace('/api/','/apis/proxies/v8/')
+    console.log('formData',formData);
+
           this.baseApiService
             .patch(uploadURL, formData, this.headers)
             .pipe(
@@ -92,12 +98,15 @@ export class QuestionnaireComponent implements OnInit {
               })
             )
             .subscribe((cloudResponse: any) => {
+   
+
               const previewURL = presignedUrlData.downloadableUrl.split('?')[0]
               const obj: any = {
                 name: event.data.name,
                 url: presignedUrlData.url.split('?')[0],
                 previewUrl:previewURL.replace(window['env' as any]['storageURL' as any],`${window['env' as any]['baseURL' as any]}/content-store`),
               };
+              console.log('obj',obj);
               for (const key of Object.keys(presignedUrlData.payload)) {
                 obj[key] = presignedUrlData['payload'][key];
               }
