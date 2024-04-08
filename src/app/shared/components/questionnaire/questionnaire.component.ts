@@ -50,8 +50,6 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   receiveFileUploadMessage(event: any) {
-    debugger
-    console.log('event',event);
     if (event.data.question_id) {
       const formData = new FormData();
       formData.append('file', event.data.file);
@@ -62,7 +60,6 @@ export class QuestionnaireComponent implements OnInit {
       payload['request'][submissionId] = {
         files: [event.data.name],
       };
-      console.log('payload',payload);
       this.baseApiService
         .post(
           urlConfig[this.config.type][this.deviceType].presignedURL,
@@ -80,10 +77,8 @@ export class QuestionnaireComponent implements OnInit {
           })
         )
         .subscribe((response: any) => {
-      console.log('response',response);
           const presignedUrlData = response['result'][submissionId].files[0];
           const uploadURL = this.deviceType == 'mobile' ? presignedUrlData.url : presignedUrlData.url.replace('/api/','/apis/proxies/v8/')
-    console.log('formData',formData);
 
           this.baseApiService
             .postWithFullURL(uploadURL, formData, this.headers)
