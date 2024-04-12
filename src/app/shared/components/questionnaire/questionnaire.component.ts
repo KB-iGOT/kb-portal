@@ -193,7 +193,7 @@ export class QuestionnaireComponent implements OnInit {
           };
           responses = await this.openConfirmationDialog(confirmationParams);
         }
-        let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submited';
+        let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submitted';
 
         if (!responses) {
             window.parent.postMessage(
