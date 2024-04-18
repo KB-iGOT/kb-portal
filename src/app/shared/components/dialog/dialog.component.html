@@ -1,7 +1,5 @@
 <h2 class="section-header-style" mat-dialog-title [ngClass]="{'success':data?.title == 'Success', 'error':data?.title == 'Error'}">{{data?.title}}</h2>
-<mat-dialog-content class="body-text">
-    {{data?.message}}
-</mat-dialog-content>
+<mat-dialog-content class="body-text" [innerHTML]="data?.message"></mat-dialog-content>
 <div  *ngIf="data?.actionBtns">
   <hr class="partition">
 <mat-dialog-actions>
