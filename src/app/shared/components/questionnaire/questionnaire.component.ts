@@ -145,7 +145,7 @@ export class QuestionnaireComponent implements OnInit {
     if (event?.detail?.status == 'submit') {
       const confirmationParams = {
         title: 'Confirmation',
-        message: `Are you sure you want to submit ${this.config.type}? <br> ${this.config.type} can be submitted only once and becomes ineditable after submission.`,
+        message: `Are you sure you want to submit ${this.config.type}? <br> ${this.config.type} can be submitted only once and becomes uneditable after submission.`,
         timer: 'fasle',
         actionBtns: true,
         btnLeftLabel: 'Cancel',
