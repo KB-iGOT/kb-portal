@@ -34,7 +34,7 @@
               "node_modules/questionnaire-webcomponent/styles.css"
             ],
             "scripts": [
-              "/home/navadhiti/questionnaire-player/web-component/questionnaire-player-webcomponent.js"
+              "node_modules/questionnaire-webcomponent/questionnaire-player-webcomponent.js"
             ]
           },
           "configurations": {
