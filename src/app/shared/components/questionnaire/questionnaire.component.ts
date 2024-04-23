@@ -131,8 +131,8 @@ export class QuestionnaireComponent implements OnInit {
       .subscribe((res: any) => {
         if (res?.result) {
           this.assessmentResult = res.result;
-        } else if (res?.message == 'Could not found solution details') {
-          this.redirectionFun('Could not found solution details.');
+        } else if (!res.result) {
+          this.redirectionFun(res.message);
         } else {
           this.errorDialog();
         }
@@ -193,7 +193,7 @@ export class QuestionnaireComponent implements OnInit {
           };
           responses = await this.openConfirmationDialog(confirmationParams);
         }
-        let msgRes = event?.detail?.status == 'draft' ? 'saved' : 'submitted';
+        let msgRes = event?.detail?.status == 'draft' ? 'saved, please complete the survey as soon as possible' : 'submitted';
 
         if (!responses) {
             window.parent.postMessage(
@@ -204,7 +204,7 @@ export class QuestionnaireComponent implements OnInit {
             );
 
             this.redirectionFun(
-              `Thank you, your ${this.config.type} has been ${msgRes}`
+              `Thank you, your ${this.config.type} has been ${msgRes}.`
             );
           }
           
