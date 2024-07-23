@@ -1,4 +1,4 @@
 window["env"] = {
-  baseURL: "https://portal.karmayogi.nic.in",
+  baseURL: "https://portal.dev.karmayogibharat.net",
   storageURL: "https://static.karmayogiprod.nic.in/igot",
 };

@@ -25,6 +25,10 @@ export class ApiBaseService {
     return this.http.post<T>(url, body, { headers });
   }
 
+  putWithFullURL<T>(url: string, body: any, headers?: HttpHeaders): Observable<T> {
+    return this.http.put<T>(url, body, { headers });
+  }
+
   delete<T>(url: string): Observable<T> {
     return this.http.delete<T>(this.baseURL+url);
   }

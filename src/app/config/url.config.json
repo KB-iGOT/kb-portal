@@ -3,12 +3,12 @@
         "portal": {
             "detailsURL": "/apis/proxies/v8/surveys/mlsurvey/v1/details",
             "updateURL": "/apis/proxies/v8/surveySubmissions/mlsurvey/v1/update/",
-            "presignedURL": "/apis/proxies/v8/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
+            "presignedURL": "/apis/proxies/v8/cloud-services/mlcore/v1/files/preSignedUrls"
         },
         "mobile":{
             "detailsURL": "/api/surveys/mlsurvey/v1/details",
             "updateURL": "/api/surveySubmissions/mlsurvey/v1/update/",
-            "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
+            "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls"
         }
     },
     "observation":{
@@ -16,13 +16,13 @@
             "detailsURL": "/apis/proxies/v8/observations/mlsurvey/v1/assessment",
             "updateURL": "/apis/proxies/v8/observationSubmissions/mlsurvey/v1/update/",
             "addEntityURL": "/apis/proxies/v8/observations/mlsurvey/v1/entities",
-            "presignedURL": "/apis/proxies/v8/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
+            "presignedURL": "/apis/proxies/v8/cloud-services/mlcore/v1/files/preSignedUrls"
         },
         "mobile":{
             "detailsURL": "/api/observations/mlsurvey/v1/assessment",
             "updateURL": "/api/observationSubmissions/mlsurvey/v1/update/",
             "addEntityURL": "/api/observations/mlsurvey/v1/entities",
-            "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls?serviceUpload=true"
+            "presignedURL": "/api/cloud-services/mlcore/v1/files/preSignedUrls"
         }
     }
    
