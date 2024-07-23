@@ -51,13 +51,6 @@ export class QuestionnaireComponent implements OnInit {
 
   receiveFileUploadMessage(event: any) {
     if (event.data.question_id) {
-      let dataToUpload: any;
-      if(['doc','pdf'].includes(event.data.type)){
-        dataToUpload = new FormData();
-        dataToUpload.append('file', event.data.file);
-      }else{
-         dataToUpload = event.data.file;
-      }
       let payload: any = {};
       payload['ref'] = 'survey';
       payload['request'] = {};
@@ -87,7 +80,7 @@ export class QuestionnaireComponent implements OnInit {
             'Content-Type': 'multipart/form-data'
           });
           this.baseApiService
-            .putWithFullURL(`${presignedUrlData.url}`, dataToUpload, headers)
+            .putWithFullURL(`${presignedUrlData.url}`, event.data.file, headers)
             .pipe(
               catchError((err) => {
                 this.fileUploadResponse = {
