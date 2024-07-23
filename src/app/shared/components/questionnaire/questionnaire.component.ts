@@ -51,8 +51,13 @@ export class QuestionnaireComponent implements OnInit {
 
   receiveFileUploadMessage(event: any) {
     if (event.data.question_id) {
-      const formData = new FormData();
-      formData.append('file', event.data.file);
+      let dataToUpload: any;
+      if(['doc','pdf'].includes(event.data.type)){
+        dataToUpload = new FormData();
+        dataToUpload.append('file', event.data.file);
+      }else{
+         dataToUpload = event.data.file;
+      }
       let payload: any = {};
       payload['ref'] = 'survey';
       payload['request'] = {};
@@ -78,10 +83,11 @@ export class QuestionnaireComponent implements OnInit {
         )
         .subscribe((response: any) => {
           const presignedUrlData = response['result'][submissionId].files[0];
-          const uploadURL = this.deviceType == 'mobile' ? presignedUrlData.url : presignedUrlData.url.replace('/api/','/apis/proxies/v8/')
-
+          const headers = new HttpHeaders({
+            'Content-Type': 'multipart/form-data'
+          });
           this.baseApiService
-            .postWithFullURL(uploadURL, formData, this.headers)
+            .putWithFullURL(`${presignedUrlData.url}`, dataToUpload, headers)
             .pipe(
               catchError((err) => {
                 this.fileUploadResponse = {
@@ -89,19 +95,15 @@ export class QuestionnaireComponent implements OnInit {
                   data: null,
                   question_id: event.data.question_id,
                 };
-                throw new Error('Unable to upload the file. Please try again');
+                throw new Error('Unable to upload the file. Please try again 111');
               })
             )
             .subscribe((cloudResponse: any) => {
-   
-
-              const previewURL = presignedUrlData.downloadableUrl.split('?')[0]
               const obj: any = {
                 name: event.data.name,
-                url: presignedUrlData.url.split('?')[0],
-                previewUrl:previewURL.replace(window['env' as any]['storageURL' as any],`${window['env' as any]['baseURL' as any]}/content-store`),
+                url: `${presignedUrlData.url}`.split('?')[0],
+                previewUrl:presignedUrlData.getDownloadableUrl[0]
               };
-              console.log('obj',obj);
               for (const key of Object.keys(presignedUrlData.payload)) {
                 obj[key] = presignedUrlData['payload'][key];
               }
